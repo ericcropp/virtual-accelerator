@@ -59,6 +59,7 @@ Optional Dependency Keys by Model:
 | `get_cu_hxr_staged_model` | `surrogate`, `bmad` | Stages `InjectorSurrogate` + CU HXR BMAD model. |
 | `get_cu_hxr_zfel_model` | `zfel` | CU HXR taper model using the 1D ZFEL backend. |
 | `virtual_accelerator.models.runners` CLI | `pva` (+ model backend key) | Runner requires `pva`; selected model backend must also be installed. |
+| `get_cu_inj_impact_model` | `Impact` | Requires impact pip install AND conda install, both detailed above |
 
 The package now lazily imports backend-specific dependencies. If you call a model
 whose optional dependency is not installed, you will get an actionable error with
