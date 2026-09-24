@@ -32,6 +32,22 @@ pip install .[pva]
 pip install .[surrogate]
 pip install .[all]
 ```
+Note that to run impact, you will also need to mamba install the following:
+```
+mamba install impact-t
+mamba install distgen
+```
+To run multi-core tracking with Impact-T, you will need to choose openmpi or mpich and do one (ONLY ONE) of the following:
+```
+# For OpenMPI
+conda install -c conda-forge impact-t=*=mpi_openmpi*
+
+# For MPICH
+conda install -c conda-forge impact-t=*=mpi_mpich*
+```
+
+And the examples require installing ipykernel and register as a Jupyter kernel.
+
 
 Optional Dependency Keys by Model:
 | Model / Factory Function | Optional dependency key(s) | Notes |
