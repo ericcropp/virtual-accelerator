@@ -33,6 +33,8 @@ class ImpactModelSpec:
     command: str = None
     command_mpi: str = None
     mpi_run: str = None
+    include_stop_element: bool = True
+    custom_aliases: dict[str, str] | None = None
 
 
 
@@ -97,7 +99,9 @@ def get_actions_from_groups(impact: Impact, spec: ImpactModelSpec):
     return actions
 
 
-def set_stop_location(impact: Impact, stop_location: str | float):
+def set_stop_location(
+    impact: Impact, stop_location: str | float, include_stop_element: bool = True
+):
     """
     Set z stop location based on the beginning of the named element or a float value
 
@@ -107,6 +111,12 @@ def set_stop_location(impact: Impact, stop_location: str | float):
         The impact model object.
     stop_location : str | float
         The stop location, either as the name of an element (str) or a float value representing the z position.
+    include_stop_element : bool, optional
+        Whether to keep the element sitting exactly on the stop plane. Default is
+        True. Pass False when handing the beam to a downstream model, so that the
+        element belongs to that model alone and the two do not both publish its
+        PVs. Tracking stops at the same z either way, since the stop plane is the
+        element's entrance.
 
     Returns:
     --------
@@ -127,9 +137,12 @@ def set_stop_location(impact: Impact, stop_location: str | float):
     impact.stop = stop_location_z
 
     # remove elements that are downstream of the stop location
-    impact.ele = {k: v for k, v in impact.ele.items() if v["s"] <= impact.stop}
+    def _keep(s: float) -> bool:
+        return s <= impact.stop if include_stop_element else s < impact.stop
+
+    impact.ele = {k: v for k, v in impact.ele.items() if _keep(v["s"])}
     impact.input["lattice"] = [
-        elem for elem in impact.lattice if elem.get("s", float("inf")) <= impact.stop
+        elem for elem in impact.lattice if _keep(elem.get("s", float("inf")))
     ]
     return impact
 
@@ -168,7 +181,11 @@ def build_impact_model(spec: ImpactModelSpec):
 
     # Set the stop location of the simulation
     if spec.stop_location is not None:
-            impact = set_stop_location(impact, spec.stop_location)
+
+        impact = set_stop_location(
+            impact, spec.stop_location, spec.include_stop_element
+        )
+
 
     # Set the parameters for the smallest possible run
     impact.header["Np"] = 1 #spec.n_particles
@@ -196,6 +213,7 @@ def build_impact_model(spec: ImpactModelSpec):
     model = LUMEDistgenImpactModel.from_objects(distgen, impact)
 
     # register additional actions to lume model
+
     if spec.custom_pv_map:
         # custom_pv_map is provided as base_pv -> element_name (e.g. FACET_PV_MAP),
         # so invert it to the element_name -> base_pv mapping expected downstream.
@@ -207,6 +225,9 @@ def build_impact_model(spec: ImpactModelSpec):
         element_name_to_base_pv_mapping = get_element_name_to_base_pv_mapping(
             os.environ[spec.lattice_env_var]
         )
+        if spec.custom_aliases:
+            element_name_to_base_pv_mapping.update(spec.custom_aliases)
+
 
     # get the screen configuration dictionary from the profmon config file
     config_path = Path(__file__).parent / ".." / "utils" / spec.profmon_config_filename
