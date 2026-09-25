@@ -25,6 +25,12 @@ class ImpactModelSpec:
     impact_yaml_file: str = None
     numprocs: int = 1
     space_charge: bool = False
+    header: dict = {}
+    custom_pv_map: dict = {}
+    command: str = None
+    command_mpi: str = None
+    mpi_run: str = None
+
 
 
 def get_impact_and_distgen(spec: ImpactModelSpec):

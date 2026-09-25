@@ -34,8 +34,8 @@ pip install .[all]
 ```
 Note that to run impact, you will also need to mamba install the following:
 ```
-mamba install impact-t
-mamba install distgen
+conda install -c conda-forge impact-t
+conda install -c conda-forge distgen
 ```
 To run multi-core tracking with Impact-T, you will need to choose openmpi or mpich and do one (ONLY ONE) of the following:
 ```
