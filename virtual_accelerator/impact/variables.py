@@ -22,7 +22,7 @@ def get_normalized_element_type(impact: Impact, element_name):
     element = impact.ele[element_name]
     element_type = element["type"]
     if element_type == "solrf":
-        if element['rf_field_scale'] == 0 and element['solenoid_field_scale']!=0:
+        if element["rf_field_scale"] == 0 and element["solenoid_field_scale"] != 0:
             element_type = "Solenoid"
     if element_type == "quadrupole":
         element_type = "Quadrupole"

@@ -423,14 +423,14 @@ class TestCUInjImpact:
         )
 
     def test_solenoid_pvs_match_impact_lattice(self, model):
-            element_names, element_types = _get_impact_lattice_element_metadata(model)
-    
-            assert_magnet_pvs_match_lattice_elements(
-                model=model,
-                element_key="Solenoid",
-                element_names=element_names,
-                element_keys=element_types,
-            )
+        element_names, element_types = _get_impact_lattice_element_metadata(model)
+
+        assert_magnet_pvs_match_lattice_elements(
+            model=model,
+            element_key="Solenoid",
+            element_names=element_names,
+            element_keys=element_types,
+        )
 
     def test_screen_pvs_match_impact_lattice(self, model):
         element_names, element_types = _get_impact_lattice_element_metadata(model)

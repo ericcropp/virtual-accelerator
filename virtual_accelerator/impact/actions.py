@@ -76,12 +76,15 @@ def reconstruct_fields(field: dict[str, Any], z: np.ndarray) -> np.ndarray:
         The reconstructed on-axis field at each ``z``, normalized to unit peak.
     """
     z = np.asarray(z, dtype=float)
-    coefs = field["fourier_coefficients"]  # key used by lume-impact's in-memory solrf fieldmap
+    coefs = field[
+        "fourier_coefficients"
+    ]  # key used by lume-impact's in-memory solrf fieldmap
     n_cos = (len(coefs) - 1) // 2
     c0, c_cos, c_sin = coefs[0], coefs[1::2], coefs[2::2]
     n = np.arange(1, n_cos + 1)
     arg = np.outer(2 * np.pi * (z - field["L"] / 2 - field["z0"]) / field["L"], n)
     return c0 / 2 + np.cos(arg) @ c_cos + np.sin(arg) @ c_sin
+
 
 def calc_effective_length(sol: dict[str, Any]) -> float:
     """
@@ -108,18 +111,20 @@ def calc_effective_length(sol: dict[str, Any]) -> float:
     z_pos, Bz_pos = z[mask], Bz[mask]
     Bpeak_pos = np.max(np.abs(Bz_pos))
 
-    trapz = np.trapezoid if hasattr(np, "trapezoid") else np.trapz  # np.trapz removed in NumPy 2.0
-    int_Bz2_pos = trapz(Bz_pos ** 2, z_pos)
-    L_eff_focus_pos = int_Bz2_pos / Bpeak_pos ** 2
+    trapz = (
+        np.trapezoid if hasattr(np, "trapezoid") else np.trapz
+    )  # np.trapz removed in NumPy 2.0
+    int_Bz2_pos = trapz(Bz_pos**2, z_pos)
+    L_eff_focus_pos = int_Bz2_pos / Bpeak_pos**2
     return L_eff_focus_pos
 
- 
+
 class SolenoidBCTRLVariable(ImpactScalarVariable, WritableActionMixin):
     read_only: bool = False
     unit: str = "kG-m"
 
     def _load_solrf(self, simulator: Impact) -> Any:
-        # Use the fieldmap already parsed into the simulator 
+        # Use the fieldmap already parsed into the simulator
         ele_attr = self._get_ele_attr(simulator)
         fieldmap = simulator.fieldmaps[ele_attr["filename"]]
         return fieldmap["field"]["Bz"]
@@ -131,7 +136,11 @@ class SolenoidBCTRLVariable(ImpactScalarVariable, WritableActionMixin):
     def _get_bctrl_value(self, simulator: Impact) -> Any:
         ele_attr = self._get_ele_attr(simulator)
         # kG-m: field scale * effective length, with a T->kG factor of 10.
-        return ele_attr["solenoid_field_scale"] * self._calculate_effective_length(simulator) * 10
+        return (
+            ele_attr["solenoid_field_scale"]
+            * self._calculate_effective_length(simulator)
+            * 10
+        )
 
     def _set_bctrl_value(self, simulator: Impact, value: Any) -> None:
         self._set_ele_attr(
@@ -139,11 +148,17 @@ class SolenoidBCTRLVariable(ImpactScalarVariable, WritableActionMixin):
             "solenoid_field_scale",
             value / (self._calculate_effective_length(simulator) * 10),
         )
-    def _get(self, simulator): return self._get_bctrl_value(simulator)
-    def _set(self, simulator, value): self._set_bctrl_value(simulator, value)
+
+    def _get(self, simulator):
+        return self._get_bctrl_value(simulator)
+
+    def _set(self, simulator, value):
+        self._set_bctrl_value(simulator, value)
+
 
 class SolenoidBACTVariable(_ReadbackFromControlMixin, SolenoidBCTRLVariable):
     """BACT readback of the solenoid."""
+
 
 class QuadrupoleBCTRLVariable(ImpactScalarVariable, WritableActionMixin):
     """Action that operates on the BCTRL/BDES property of Quadrupoles"""
