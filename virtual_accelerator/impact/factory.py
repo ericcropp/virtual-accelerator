@@ -10,7 +10,6 @@ from impact.model.distgen.distgen_impact_model import LUMEDistgenImpactModel
 from virtual_accelerator.impact.actions import ImpactGroupVariable
 from virtual_accelerator.utils.variables import (
     get_element_attr_mapping,
-    get_element_name_to_base_pv_mapping,
 )
 from virtual_accelerator.impact.variables import get_variables
 
@@ -23,6 +22,7 @@ class ImpactModelSpec:
     distgen_file: str
     n_particles: int
     profmon_config_filename: str
+    element_name_to_base_pv_mapping: dict[str, str]
     stop_location: str | float = None
     impact_file: str = None
     impact_yaml_file: str = None
@@ -235,7 +235,7 @@ def build_impact_model(spec: ImpactModelSpec):
         impact,
         get_element_attr_mapping(),
         screen_config_dict,
-        element_name_to_base_pv_mapping,
+        {**spec.element_name_to_base_pv_mapping, **(spec.custom_aliases or {})},
     )
     for var in action_variables:
         model.register_impact_action_variable(var)
