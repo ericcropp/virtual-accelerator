@@ -29,7 +29,6 @@ class ImpactModelSpec:
     numprocs: int = 1
     space_charge: bool = False
     header: dict = field(default_factory=dict)
-    # custom_pv_map: dict = field(default_factory=dict)
     command: str = None
     command_mpi: str = None
     mpi_run: str = None
@@ -208,22 +207,6 @@ def build_impact_model(spec: ImpactModelSpec):
 
     # create the LUMEDistgenImpactModel from the distgen and impact objects
     model = LUMEDistgenImpactModel.from_objects(distgen, impact)
-
-    # register additional actions to lume model
-
-    # if spec.custom_pv_map:
-    #     # custom_pv_map is provided as base_pv -> element_name (e.g. FACET_PV_MAP),
-    #     # so invert it to the element_name -> base_pv mapping expected downstream.
-    #     element_name_to_base_pv_mapping = {
-    #         element_name: base_pv
-    #         for base_pv, element_name in spec.custom_pv_map.items()
-    #     }
-    # else:
-    #     element_name_to_base_pv_mapping = get_element_name_to_base_pv_mapping(
-    #         os.environ[spec.lattice_env_var]
-    #     )
-    #     if spec.custom_aliases:
-    #         element_name_to_base_pv_mapping.update(spec.custom_aliases)
 
     # get the screen configuration dictionary from the profmon config file
     config_path = Path(__file__).parent / ".." / "utils" / spec.profmon_config_filename
