@@ -181,10 +181,10 @@ MODELS: dict[str, ModelEntry] = {
         extras=("impact",),
         params={
             "n_particles": 100,
-            "end_element": "PR10241",
+            "end_element": "L0AFEND",
             "include_end_element": True,
         },
-        handoff_points=("PR10241",),
+        handoff_points=("PR10241","L0AFEND",),
         end_param="end_element",
         default_start="CATHODEF",
         default_end="PR10241",

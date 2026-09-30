@@ -205,6 +205,15 @@ def build_impact_model(spec: ImpactModelSpec):
     # set the parameters of the distgen model
     distgen["n_particle"] = spec.n_particles
 
+    # DIAGNOSTIC: distgen configured vs generated charge (chasing the 1 C normalization)
+    distgen.run()
+    print(
+        f"[distgen] total_charge param={distgen['total_charge']} "
+        f"-> generated charge={distgen.particles.charge:.6g} C, "
+        f"n={distgen.particles.n_particle}"
+    )
+
+
     # create the LUMEDistgenImpactModel from the distgen and impact objects
     model = LUMEDistgenImpactModel.from_objects(distgen, impact)
 
