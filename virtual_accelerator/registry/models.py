@@ -190,7 +190,7 @@ MODELS: dict[str, ModelEntry] = {
         ),
         end_param="end_element",
         default_start="CATHODEF",
-        default_end="PR10241",
+        default_end="L0AFEND",
         shared_params=frozenset({"n_particles"}),
     ),
     "surrogate_f2e_inj": ModelEntry(
