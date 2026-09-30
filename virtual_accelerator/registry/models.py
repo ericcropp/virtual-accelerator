@@ -184,7 +184,10 @@ MODELS: dict[str, ModelEntry] = {
             "end_element": "L0AFEND",
             "include_end_element": True,
         },
-        handoff_points=("PR10241","L0AFEND",),
+        handoff_points=(
+            "PR10241",
+            "L0AFEND",
+        ),
         end_param="end_element",
         default_start="CATHODEF",
         default_end="PR10241",
